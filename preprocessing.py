@@ -52,8 +52,10 @@ def riskFreeRate():
 #function to get all relevant option data at once
 def optionData(ticker, expiration, Call):
     #for now, assume we use only atm
-    u, s, v = fetchAtmData(ticker, expiration, Call)
+    s, k, v = fetchAtmData(ticker, expiration, Call)
     t = timeToExpiration(expiration)
     r = riskFreeRate()
 
-    return u, s, v, t, r
+    return s, k, v, t, r
+
+
