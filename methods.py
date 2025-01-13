@@ -19,15 +19,20 @@ def simulateGBM(S0, r, sigma, T, numSteps, numPaths):
 
     return paths
 
+def estimate(paths, type):
+    if type == "European":                          #need final price for european option
+        return paths[:, -1]
+    elif type == "Asian":                           #need arithmetic mean for asian arithmetic option
+        return np.mean(paths, axis=1)
 
-#get call or put payoff from final prices
-def getPayoffs(paths, K, call):
-    Sfinal = paths[:, -1]
+#get call or put payoff from final prices for european options
+def getPayoffs(estimations, K, call):
     if call:
-        return np.maximum(Sfinal-K, 0)          #call payoff
+        return np.maximum(estimations-K, 0)          #call payoff
     else:
-        return np.maximum(K-Sfinal, 0)          #put payoff
+        return np.maximum(K-estimations, 0)          #put payoff
     
+
 #discount payoff based on risk-free rate and calculate avg
 def avgDiscountedPayoff(payoffs, r, T):
     disc = payoffs * np.exp(-r * T)
@@ -63,15 +68,15 @@ def graphGBM(paths, ticker):
 
 
 #demonstrate how Monte Carlo converges to Black-Scholes for European Options
-def graphConvergence(S0, K, r, sigma, T, nList, fairPrice, call):
+def graphConvergence(S0, K, r, sigma, T, numSteps, nList, fairPrice, call):
     max_paths = max(nList)
-    allPaths = simulateGBM(S0, r, sigma, T, 5000, max_paths)            #calculate max # of paths at first, then sample from it
-    
+    allPaths = simulateGBM(S0, r, sigma, T, numSteps, max_paths)            #calculate max # of paths at first, then sample from it
+    finals = estimate(allPaths, "European")
+
     estimates = []
-    for n in nList:
-        currentPaths = allPaths[:n]                                     #use first n paths
-        np.random.shuffle(allPaths)                                     #shuffle so we do not overuse some subset of paths 
-        payoffs = getPayoffs(currentPaths, K, call)
+    for n in nList:                                     #use first n paths
+        np.random.shuffle(allPaths)
+        payoffs = getPayoffs(finals[:n], K, call)
         discounted = avgDiscountedPayoff(payoffs, r, T)
         estimates.append(discounted)                                    #interested only in the average discounted payoff here
     
