@@ -52,6 +52,8 @@ def blackScholes(S0, K, r, sigma, T , call):
 1) MC Paths & black scholes endpoint on same graph
 2) 
 """
+
+#graph a simulated GBM + MC
 def graphGBM(paths, ticker):
     time = np.arange(0, len(paths[1]))
     for path in paths:
@@ -59,14 +61,20 @@ def graphGBM(paths, ticker):
     plt.title("Asset Paths for " + ticker + " according to Geometric Brownian Motion")
     plt.show()
 
+
+#demonstrate how Monte Carlo converges to Black-Scholes for European Options
 def graphConvergence(S0, K, r, sigma, T, nList, fairPrice, call):
+    max_paths = max(nList)
+    allPaths = simulateGBM(S0, r, sigma, T, 5000, max_paths)            #calculate max # of paths at first, then sample from it
+    
     estimates = []
     for n in nList:
-        paths = simulateGBM(S0, r, sigma, T, 5000, n)
-        payoffs = getPayoffs(paths, K, call)
+        currentPaths = allPaths[:n]                                     #use first n paths
+        np.random.shuffle(allPaths)                                     #shuffle so we do not overuse some subset of paths 
+        payoffs = getPayoffs(currentPaths, K, call)
         discounted = avgDiscountedPayoff(payoffs, r, T)
-        estimates.append(discounted)
-
+        estimates.append(discounted)                                    #interested only in the average discounted payoff here
+    
     plt.plot(nList, estimates, label="Monte Carlo Estimate")
     plt.axhline(y=fairPrice, color='r', linestyle='--', label="Black–Scholes Price")
     plt.xlabel("Number of Paths")
@@ -74,5 +82,6 @@ def graphConvergence(S0, K, r, sigma, T, nList, fairPrice, call):
     plt.title("Monte Carlo Convergence to Black–Scholes")
     plt.legend()
     plt.show()
+
 
 
