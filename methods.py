@@ -62,7 +62,7 @@ def graphGBM(paths, ticker):
 def graphConvergence(S0, K, r, sigma, T, nList, fairPrice, call):
     estimates = []
     for n in nList:
-        paths = simulateGBM(S0, r, sigma, T, n, 1000)
+        paths = simulateGBM(S0, r, sigma, T, 5000, n)
         payoffs = getPayoffs(paths, K, call)
         discounted = avgDiscountedPayoff(payoffs, r, T)
         estimates.append(discounted)

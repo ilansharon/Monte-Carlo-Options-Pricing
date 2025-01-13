@@ -1,5 +1,6 @@
 from preprocessing import optionData
 from methods import simulateGBM, getPayoffs, avgDiscountedPayoff, blackScholes, graphGBM, graphConvergence
+import numpy as np
 
 TICKER = "MSFT"
 EXPIRATION = "2025-01-17"
@@ -17,5 +18,5 @@ print("black scholes payout", BS)
 # plt.show()
 
 #graphGBM(paths, TICKER)
-nList = [10, 20, 30, 40, 50, 100, 150, 200, 400, 800, 1000, 2000, 3000, 5000, 10000, 100000]
+nList = np.arange(1, 25000, 1000)
 graphConvergence(S0, K, r, sigma, T, nList, BS, True)
