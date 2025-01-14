@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from models import simulateGBM
+from models import GBM
 from options import estimate, getPayoffs, avgDiscountedPayoff
 
 #visualization:
@@ -21,8 +21,9 @@ def graphGBM(paths, ticker):
 
 #demonstrate how Monte Carlo converges to Black-Scholes for European Options
 def graphConvergence(S0, K, r, sigma, T, numSteps, nList, fairPrice, call):
-    max_paths = max(nList)
-    allPaths = simulateGBM(S0, r, sigma, T, numSteps, max_paths)            #calculate max # of paths at first, then sample from it
+    maxPaths = max(nList)
+    modelGBM = GBM(S0, r, sigma, T, numSteps, maxPaths)
+    allPaths = modelGBM.simulate()            #calculate max # of paths at first, then sample from it
     finals = estimate(allPaths, "European")
 
     estimates = []

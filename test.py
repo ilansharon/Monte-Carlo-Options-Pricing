@@ -1,6 +1,6 @@
 from preprocessing import optionData
 from options import getPayoffs, avgDiscountedPayoff, blackScholes, estimate
-from models import simulateGBM
+from models import GBM
 from visualization import graphGBM, graphConvergence
 import numpy as np
 
@@ -8,7 +8,8 @@ TICKER = "MSFT"
 EXPIRATION = "2025-01-17"
 
 S0, K, sigma, T, r = optionData(TICKER, EXPIRATION, True)
-paths = simulateGBM(S0, r, sigma, T, 3000, 5000)
+modelGBM = GBM(S0, r, sigma, T, 3000, 5000)
+paths = modelGBM.simulate()
 estimationsA = estimate(paths, "Asian")
 estimationsE = estimate(paths, "European")
 payoffsA = getPayoffs(estimationsA, K, True)
