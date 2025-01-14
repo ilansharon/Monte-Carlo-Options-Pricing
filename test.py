@@ -1,5 +1,7 @@
 from preprocessing import optionData
-from methods import simulateGBM, getPayoffs, avgDiscountedPayoff, blackScholes, graphGBM, graphConvergence, estimate
+from options import getPayoffs, avgDiscountedPayoff, blackScholes, estimate
+from models import simulateGBM
+from visualization import graphGBM, graphConvergence
 import numpy as np
 
 TICKER = "MSFT"
